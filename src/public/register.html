@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar">
         <div class="logo">QuickAnswerAI</div>
-        <button class="get-started" onclick="window.location.href = 'http://localhost:3000/login'">Login</button>
+        <button class="get-started" onclick="goToLogin()">Login</button>
     </nav>
 
     <div class="login">
@@ -19,7 +19,7 @@
         <input id="password" type="password" placeholder="Password">
         <input id="passwordAgain" type="password" placeholder="Password again">
         <button id="register">Register</button>
-        <p class="no-account" onclick="window.location.href = 'http://localhost:3000/login'">Have an acount? <u class="underlined">Click here!</u></p>
+        <p class="no-account" onclick="goToLogin()">Have an acount? <u class="underlined">Click here!</u></p>
     </div>
     <script src="script.js"></script>
 </body>
