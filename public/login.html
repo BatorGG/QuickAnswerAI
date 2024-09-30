@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Login - QuickAnswerAI</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">QuickAnswerAI</div>
+        <button class="get-started" onclick="goToRegister()">Register</button>
+    </nav>
+
+    <div class="login">
+        <h1>Login</h1>
+        <p id="error-message"></p>
+        <input id="username" type="text" placeholder="Email address">
+        <input id="password" type="password" placeholder="Password">
+        <button id="login">Login</button>
+        <p class="no-account" onclick="goToRegister()">No acount? <u class="underlined">Click here!</u></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
