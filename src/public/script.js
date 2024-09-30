@@ -1,3 +1,5 @@
+const baseURL = window.location.origin;
+
 const checkoutBtn = document.getElementById('checkout-button');
 if (checkoutBtn) {
   checkoutBtn.addEventListener('click', function () {
@@ -33,7 +35,7 @@ if (loginBtn) {
     const password = document.getElementById("password").value;
 
   
-    fetch('http://localhost:3000/login', {
+    fetch(baseURL + '/login', {
       method: 'POST',
       body: JSON.stringify({ 
         email: email,
@@ -48,7 +50,7 @@ if (loginBtn) {
             const token = data.token;
             // Store the token in chrome.storage
             localStorage.setItem('jwt', token);
-            window.location.href = "http://localhost:3000/dashboard";
+            window.location.href = baseURL + "/dashboard";
           }
           else {
             document.getElementById("error-message").innerText = data.message;
@@ -83,7 +85,7 @@ if (registerBtn) {
 
       registerBtn.innerText = "Please wait..."
   
-      fetch('http://localhost:3000/register', {
+      fetch(baseURL + "/register", {
         method: 'POST',
         body: JSON.stringify({ 
           email: email,
@@ -98,7 +100,7 @@ if (registerBtn) {
               // Store the token in chrome.storage
               const token = data.token;
               localStorage.setItem('jwt', token);
-              window.location.href = "http://localhost:3000/dashboard";
+              window.location.href = baseURL + "/dashboard";
             }
             else {
               errorMessage.innerText = data.message;
@@ -121,7 +123,7 @@ if (logoutBtn) {
     console.log(e);
     console.log("clicked");
       localStorage.removeItem('jwt');
-      window.location.href = "http://localhost:3000";
+      window.location.href = baseURL;
       
       console.log(window.location.href);
   });
@@ -142,7 +144,7 @@ if (checkBtn) {
     const decodedToken = decodeJWT(token);
     const email = decodedToken.email
 
-    fetch('http://localhost:3000/check-subscription', {
+    fetch(baseURL + '/check-subscription', {
         method: 'POST',
         body: JSON.stringify({ 
           email: email
@@ -158,7 +160,7 @@ if (checkBtn) {
 
 document.addEventListener("DOMContentLoaded", (event) => {
   console.log("conent loaded");
-  if (window.location.href == "http://localhost:3000/dashboard") {
+  if (window.location.href == baseURL + "/dashboard") {
     updateDashboard();
   }
   else {
@@ -173,7 +175,7 @@ if (cancelBtn) {
     const decodedToken = decodeJWT(token);
     const email = decodedToken.email;
 
-    fetch('http://localhost:3000/cancel-subscription', {
+    fetch(baseURL + '/cancel-subscription', {
       method: 'POST',
       body: JSON.stringify({ 
         email: email
