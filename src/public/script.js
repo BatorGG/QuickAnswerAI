@@ -192,6 +192,14 @@ if (cancelBtn) {
   });
 }
 
+function goToLogin() {
+  window.location.href = baseURL + "/login";
+}
+
+function goToRegister() {
+  window.location.href = baseURL + "/register";
+}
+
 function updateDashboard() {
   const token = localStorage.getItem('jwt');
   const decodedToken = decodeJWT(token);
