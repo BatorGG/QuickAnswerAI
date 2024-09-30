@@ -261,9 +261,7 @@ app.post('/login', async (req, res) => {
 
   try {
       const users = await jsonfile.readFile(USER_FILE);
-      console.log(users);
       const user = users.find(user => user.email === email);
-      console.log(user);
 
       if (!user) {
           return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -292,7 +290,6 @@ app.post('/login', async (req, res) => {
 
       
   } catch (error) {
-      console.log(error);
       res.status(500).json({ success: false, message: 'Error logging in' });
   }
 });
@@ -332,7 +329,7 @@ app.post('/create-checkout-session', async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${req.headers.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/dashboard`,
       customer_email: email
     });
