@@ -20,8 +20,9 @@ if (checkoutBtn) {
     .then(response => response.json())
     .then(session => {
       // Redirect to Stripe Checkout
-      window.location.href = session.url;
       localStorage.setItem('jwt', token);
+      window.location.href = session.url;
+      console.log("set or not set?")
     })
     .catch(error => console.error('Error:', error));
 });
@@ -223,6 +224,7 @@ function goToRegister() {
 function updateDashboard() {
   const token = localStorage.getItem('jwt');
   const decodedToken = decodeJWT(token);
+  console.log(decodedToken)
 
   if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
     const email = decodedToken.email
