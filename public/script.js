@@ -222,8 +222,33 @@ function goToRegister() {
 }
 
 function updateDashboard() {
-  const token = localStorage.getItem('jwt');
-  const decodedToken = decodeJWT(token);
+
+  const params = new URLSearchParams(window.location.search);
+  const checkOutToken = params.get('token');
+
+  let token = localStorage.getItem('jwt');
+  let decodedToken = decodeJWT(token);
+
+  if (checkOutToken) {
+    localStorage.setItem('jwt', checkOutToken);
+    token = checkOutToken
+    decodedToken = decodeJWT(token);
+
+    fetch(baseURL + '/update-subscription', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        email: decodedToken.email,
+        subscription: decodedToken.subscription
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then((data) => {
+        console.log('Success:', data)
+      })
+      .catch(error => console.error('Error:', error));
+
+  }
+
   console.log(decodedToken)
 
   if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
