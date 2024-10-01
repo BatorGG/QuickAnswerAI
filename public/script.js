@@ -3,6 +3,7 @@ const baseURL = window.location.origin;
 const checkoutBtn = document.getElementById('checkout-button');
 if (checkoutBtn) {
   checkoutBtn.addEventListener('click', function () {
+    checkoutBtn.innerText = "Please wait";
     const token = localStorage.getItem('jwt');
     const decodedToken = decodeJWT(token);
     const email = decodedToken.email
@@ -20,6 +21,7 @@ if (checkoutBtn) {
     .then(session => {
       // Redirect to Stripe Checkout
       window.location.href = session.url;
+      localStorage.setItem('jwt', token);
     })
     .catch(error => console.error('Error:', error));
 });
@@ -222,7 +224,7 @@ function updateDashboard() {
   const token = localStorage.getItem('jwt');
   const decodedToken = decodeJWT(token);
 
-  if (decodedToken) {
+  if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
     const email = decodedToken.email
     const dashboard = document.getElementsByClassName("dashboard")[0];
     document.getElementById("showemail").innerText = "Welcome " + email;
@@ -239,6 +241,9 @@ function updateDashboard() {
       document.getElementById("plan-select").classList.remove("hidden");
       document.getElementById("hasSubscription").classList.add("hidden");
     }
+  }
+  else {
+    window.location.href = baseURL + "/login";
   }
  
 }
