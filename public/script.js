@@ -225,14 +225,17 @@ function updateDashboard() {
 
   const params = new URLSearchParams(window.location.search);
   const checkOutToken = params.get('token');
+  console.log(checkOutToken)
 
   let token = localStorage.getItem('jwt');
   let decodedToken = decodeJWT(token);
-
+  console.log("1", decodedToken);
+  console.log("Checkouttoken:", checkOutToken);
   if (checkOutToken) {
     localStorage.setItem('jwt', checkOutToken);
     token = checkOutToken
     decodedToken = decodeJWT(token);
+    console.log("2", decodedToken);
 
     fetch(baseURL + '/update-subscription', {
       method: 'POST',
