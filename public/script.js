@@ -183,6 +183,8 @@ if (cancelBtn) {
     const decodedToken = decodeJWT(token);
     const email = decodedToken.email;
 
+    cancelBtn.innerText = "Please wait";
+
     fetch(baseURL + '/cancel-subscription', {
       method: 'POST',
       body: JSON.stringify({ 
@@ -196,10 +198,15 @@ if (cancelBtn) {
           const token = data.token;
           localStorage.setItem('jwt', token);
           updateDashboard();
-          document.getElementById("cancel-response").innerText = "Success! Your subscription will be canceled at the end of the period."
+          cancelBtn.remove();
+          document.getElementById("cancel-response").innerText = "Success! Your subscription will be canceled at the end of the period.";
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch((error) => {
+        console.error('Error:', error)
+        cancelBtn.innerText = "Error.";
+        document.getElementById("cancel-response").innerText = "Please try again in a few minutes or send us an email!";
+    });
   });
 }
 
@@ -225,6 +232,7 @@ function updateDashboard() {
       document.getElementById("hasSubscription").classList.remove("hidden");
       if (decodedToken.canceled){
         document.getElementById("cancel-response").innerText = "Your subscription will be canceled at the end of the period.";
+        document.getElementById("cancel-subscription").remove();
       }
     }
     else {
