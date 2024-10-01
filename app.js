@@ -338,7 +338,7 @@ app.post('/create-checkout-session', async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${req.headers.origin}/dashboard`,
       cancel_url: `${req.headers.origin}/dashboard`,
       customer_email: email
     });
