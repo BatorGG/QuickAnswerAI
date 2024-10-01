@@ -350,7 +350,7 @@ app.post('/create-checkout-session', async (req, res) => {
     });
 
 
-    res.json({ url: session.url, token});
+    res.json({ url: session.url});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
