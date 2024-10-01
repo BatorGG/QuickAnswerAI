@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>QuickAnswerAI</title>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">QuickAnswerAI</div>
-        <button class="get-started" onclick="goToLogin()">Get Started</button>
+        <div class="logo" onclick="window.location.href = window.location.origin">QuickAnswerAI</div>
+        <button class="get-started" id="get-started" onclick="goToLogin()">Get Started</button>
     </nav>
 
     <section class="info-section">
@@ -40,36 +41,26 @@
                 <div class="price">
                     <p>$14.99/month</p>
                 </div>
+                <p><strong>Free for one week!</strong></p>
                 <p>Full access to QuickAnswerAI</p>
                 <p>Instant AI responses</p>
                 <p>Unlimited questions</p>
                 <p>Fast customer support</p>
-                <button class="select-option" onclick="goToLogin()">Select Option!</button>
+                <button class="select-option" onclick="goToLogin()">Start for free!</button>
                 
             </div>
             <div class="option">
-                <h3>6 Months</h3>
-                <div class="price">
-                    <p>$12.99/month</p>
-                    <p>13% Off!</p>
-                </div>
-                <p>Full access to QuickAnswerAI</p>
-                <p>Instant AI responses</p>
-                <p>Unlimited questions</p>
-                <p>Fast customer support</p>
-                <button class="select-option" onclick="goToLogin()">Unavailable</button>
-            </div>
-            <div class="option">
-                <h3>1 Year</h3>
+                <h3>3 Months</h3>
                 <div class="price">
                     <p>$9.99/month</p>
-                    <p>33% Off!</p>
+                    <p><strong>33% Off!</strong></p>
                 </div>
+                <p><strong>Free for one week!</strong></p>
                 <p>Full access to QuickAnswerAI</p>
                 <p>Instant AI responses</p>
                 <p>Unlimited questions</p>
                 <p>Fast customer support</p>
-                <button class="select-option" onclick="goToLogin()">Unavailable</button>
+                <button class="select-option" onclick="goToLogin()">Start for free!</button>
             </div>
         </div>
     </section>

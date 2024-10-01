@@ -176,6 +176,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
   }
   else {
     console.log(window.location.href);
+    const token = localStorage.getItem('jwt');
+    const decodedToken = decodeJWT(token);
+
+    if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
+      const getStarted = document.getElementById("get-started");
+      if (getStarted) {
+        getStarted.innerText = "Dashboard";
+      }
+    }
   }
 })
 
@@ -201,8 +210,9 @@ if (cancelBtn) {
           const token = data.token;
           localStorage.setItem('jwt', token);
           updateDashboard();
-          cancelBtn.remove();
-          document.getElementById("cancel-response").innerText = "Success! Your subscription will be canceled at the end of the period.";
+          cancelBtn.classList.add("hidden");
+          document.getElementById("cancel-response").innerText = "Success! Your subscription will be canceled at the end of the period. Please reconsider continuing your subscription:";
+          document.getElementById("renew-subscription").classList.remove("hidden");
         }
       })
       .catch((error) => {
@@ -213,8 +223,53 @@ if (cancelBtn) {
   });
 }
 
+const renewBtn = document.getElementById("renew-subscription");
+if (renewBtn) {
+  console.log("Renewbtn yes");
+  renewBtn.addEventListener('click', () => {
+    const token = localStorage.getItem('jwt');
+    const decodedToken = decodeJWT(token);
+    const email = decodedToken.email;
+
+    renewBtn.innerText = "Please wait";
+
+    fetch(baseURL + '/renew-subscription', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        email: email
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then((data) => {
+        console.log('Success:', data)
+        if (data.success) {
+          const token = data.token;
+          localStorage.setItem('jwt', token);
+          updateDashboard();
+          renewBtn.classList.add("hidden");
+          document.getElementById("cancel-response").innerText = "Success! Your subscription will be continued.";
+          document.getElementById("cancel-subscription").classList.remove("hidden");
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+        renewBtn.innerText = "Error.";
+        document.getElementById("cancel-response").innerText = "Please try again in a few minutes!";
+    });
+  });
+}
+
 function goToLogin() {
-  window.location.href = baseURL + "/login";
+  const token = localStorage.getItem('jwt');
+  const decodedToken = decodeJWT(token);
+
+  if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
+    window.location.href = baseURL + "/dashboard";
+  }
+  else {
+    window.location.href = baseURL + "/login";
+  }
+  
 }
 
 function goToRegister() {
@@ -263,8 +318,13 @@ function updateDashboard() {
       document.getElementById("plan-select").classList.add("hidden");
       document.getElementById("hasSubscription").classList.remove("hidden");
       if (decodedToken.canceled){
-        document.getElementById("cancel-response").innerText = "Your subscription will be canceled at the end of the period.";
-        document.getElementById("cancel-subscription").remove();
+        document.getElementById("cancel-response").innerText = "Your subscription will be canceled at the end of the period. Please reconsider continuing your subscription:";
+        document.getElementById("cancel-subscription").classList.add("hidden")
+        document.getElementById("renew-subscription").classList.remove("hidden");
+      }
+      else {
+        document.getElementById("renew-subscription").classList.add("hidden")
+        document.getElementById("cancel-subscription").classList.remove("hidden");
       }
     }
     else {

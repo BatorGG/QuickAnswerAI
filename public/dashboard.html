@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>QuickAnswerAI</title>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">QuickAnswerAI</div>
+        <div class="logo" onclick="window.location.href = window.location.origin">QuickAnswerAI</div>
         <button class="get-started" id="logout">Log out</button>
     </nav>
     <div class="dashboard">
@@ -23,6 +24,7 @@
         <h3>Cancel subscription:</h3>
         <button class="get-extension" id="cancel-subscription">Cancel subscription</button>
         <p id="cancel-response"></p>
+        <button class="get-extension" id="renew-subscription">Continue subscription</button>
     </section>
 
     <section class="pricing-section" id="plan-select">
@@ -34,36 +36,26 @@
                 <div class="price">
                     <p>$14.99/month</p>
                 </div>
+                <p><strong>Free for one week!</strong></p>
                 <p>Full access to QuickAnswerAI</p>
                 <p>Instant AI responses</p>
                 <p>Unlimited questions</p>
                 <p>Fast customer support</p>
-                <button class="select-option" id="checkout-button">Select Option!</button>
+                <button class="select-option" id="checkout-button">Start for free!</button>
                 
             </div>
             <div class="option">
-                <h3>6 Months</h3>
-                <div class="price">
-                    <p>$12.99/month</p>
-                    <p>13% Off!</p>
-                </div>
-                <p>Full access to QuickAnswerAI</p>
-                <p>Instant AI responses</p>
-                <p>Unlimited questions</p>
-                <p>Fast customer support</p>
-                <button class="select-option">Unavailable</button>
-            </div>
-            <div class="option">
-                <h3>1 Year</h3>
+                <h3>3 Months</h3>
                 <div class="price">
                     <p>$9.99/month</p>
-                    <p>33% Off!</p>
+                    <p><strong>33% Off!</strong></p>
                 </div>
+                <p><strong>Free for one week!</strong></p>
                 <p>Full access to QuickAnswerAI</p>
                 <p>Instant AI responses</p>
                 <p>Unlimited questions</p>
                 <p>Fast customer support</p>
-                <button class="select-option">Unavailable</button>
+                <button class="select-option" id="checkout-button2">Start for free!</button>
             </div>
         </div>
     </section>

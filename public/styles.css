@@ -20,6 +20,7 @@ body {
 .logo {
     font-size: 32px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .get-started {
@@ -128,14 +129,28 @@ body {
     display: flex;
     justify-content: space-around;
     padding-top: 20px;
+    width: 80%;
+    margin: 0 auto; /* Centers the element */
 }
 
 .option {
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 10px;
-    width: 30%;
+    width: 45%;
     transition: transform 0.3s ease;
+}
+
+/* Styles for mobile screens */
+@media (max-width: 768px) {
+    .pricing-options {
+        width: 80%;
+        flex-direction: column; /* Stack options vertically if needed */
+    }
+    .option {
+        width: 100%;
+        margin-top: 20px;
+    }
 }
 
 .option:hover {
