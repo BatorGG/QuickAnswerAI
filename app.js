@@ -347,7 +347,17 @@ app.post('/create-checkout-session', async (req, res) => {
       email: email
     });
 
-    res.json({ url: session.url });
+    const updatedUser = await User.findOneAndUpdate(
+      { email }, 
+      { $set: { subscription: true } }, 
+      { new: true }
+    );
+    console.log(updatedUser);
+
+    const token = jwt.sign({ email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled }, SECRET_KEY, { expiresIn: '1h' });
+    
+
+    res.json({ url: session.url, token});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
