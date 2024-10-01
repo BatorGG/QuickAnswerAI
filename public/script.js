@@ -193,6 +193,9 @@ if (cancelBtn) {
       .then((data) => {
         console.log('Success:', data)
         if (data.success) {
+          const token = data.token;
+          localStorage.setItem('jwt', token);
+          updateDashboard();
           document.getElementById("cancel-response").innerText = "Success! Your subscription will be canceled at the end of the period."
         }
       })
@@ -220,6 +223,9 @@ function updateDashboard() {
     if (decodedToken.subscription) {
       document.getElementById("plan-select").classList.add("hidden");
       document.getElementById("hasSubscription").classList.remove("hidden");
+      if (decodedToken.canceled){
+        document.getElementById("cancel-response").innerText = "Your subscription will be canceled at the end of the period.";
+      }
     }
     else {
       document.getElementById("plan-select").classList.remove("hidden");
