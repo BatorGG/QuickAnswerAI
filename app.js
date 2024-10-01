@@ -328,6 +328,8 @@ app.post('/create-checkout-session', async (req, res) => {
 
   try {
     const email = req.body.email;
+    const tokenYes = jwt.sign({ email: email, subscription: true, canceled: false }, SECRET_KEY, { expiresIn: '1h' });
+    const tokenNo = jwt.sign({ email: email, subscription: false, canceled: false }, SECRET_KEY, { expiresIn: '1h' });
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -338,8 +340,8 @@ app.post('/create-checkout-session', async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.origin}/dashboard`,
-      cancel_url: `${req.headers.origin}/dashboard`,
+      success_url: `${req.headers.origin}/dashboard?token=${tokenYes}`,
+      cancel_url: `${req.headers.origin}/dashboard?token=${tokenYes}`,
       customer_email: email
     });
 
@@ -347,21 +349,27 @@ app.post('/create-checkout-session', async (req, res) => {
       email: email
     });
 
-    const updatedUser = await User.findOneAndUpdate(
-      { email }, 
-      { $set: { subscription: true } }, 
-      { new: true }
-    );
-    console.log(updatedUser);
-
-    const token = jwt.sign({ email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled }, SECRET_KEY, { expiresIn: '1h' });
-    
 
     res.json({ url: session.url, token});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+app.post('/update-subscription', async (req, res) => {
+  const email = req.body.email;
+  const subscription = req.body.subscription;
+
+  const updatedUser = await User.findOneAndUpdate(
+    { email }, 
+    { $set: { subscription: subscription } }, 
+    { new: true }
+  );
+
+  res.json({ success: true});
+
+});
+
+
 
 async function getCustomerIdByEmail(email) {
   const customers = await stripe.customers.list({ limit: 100 }); // Adjust limit as needed
