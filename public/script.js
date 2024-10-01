@@ -171,7 +171,7 @@ if (checkBtn) {
 
 document.addEventListener("DOMContentLoaded", (event) => {
   console.log("conent loaded");
-  if (window.location.href == baseURL + "/dashboard") {
+  if (window.location.pathname === "/dashboard") {
     updateDashboard();
   }
   else {
