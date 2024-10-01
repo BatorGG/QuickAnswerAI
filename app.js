@@ -365,6 +365,8 @@ app.post('/update-subscription', async (req, res) => {
     { new: true }
   );
 
+  console.log("user subscription updated:", updatedUser);
+
   res.json({ success: true});
 
 });
