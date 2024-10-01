@@ -220,6 +220,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   subscription: { type: Boolean, default: false },
+  canceled: { type: Boolean, default: false },
 });
 
 const User = mongoose.model('User', userSchema);
@@ -244,11 +245,11 @@ app.post('/register', async (req, res) => {
     }
     else {
       const hashedPassword = await bcrypt.hash(password, 10);
-      user = new User({ email: email, password: hashedPassword, subscription: false});
+      user = new User({ email: email, password: hashedPassword, subscription: false, canceled: false});
       await user.save();
       console.log(user);
 
-      const token = jwt.sign({ email: user.email, subscription: false }, SECRET_KEY, { expiresIn: '1h' });
+      const token = jwt.sign({ email: user.email, subscription: false, canceled: false }, SECRET_KEY, { expiresIn: '1h' });
 
       res.json({ success: true, message: 'User registered successfully', token });
     }
@@ -291,7 +292,7 @@ app.post('/login', async (req, res) => {
         console.log(result);
 
         // Generate a JWT token
-        const token = jwt.sign({ email: user.email, subscription: hasSubscription }, SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({ email: user.email, subscription: hasSubscription, canceled: user.canceled }, SECRET_KEY, { expiresIn: '1h' });
         res.status(200).json({ success: true, token });
       }
     }
@@ -379,6 +380,27 @@ async function checkUserSubscriptionByEmail(email) {
   return subscriptions.data.length > 0; // Returns true if active subscription exists
 };
 
+async function checkCanceled(email) {
+  const customerId = await getCustomerIdByEmail(email);
+  
+  if (!customerId) {
+      console.log('No customer found with that email.');
+      return false; // No customer found
+  }
+
+  // Check for active subscriptions
+  const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'active',
+  });
+
+  console.log(subscriptions.data[0].cancel_at_period_end);
+
+  return subscriptions.data[0].cancel_at_period_end; // Returns true if active subscription exists
+};
+
+
+
 
 app.post('/check-subscription', async (req, res) => {
   const email = req.body.email;
@@ -405,8 +427,17 @@ app.post('/cancel-subscription', async (req, res) => {
     const canceledSubscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: true,
     });
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email }, 
+      { $set: { canceled: true } }, 
+      { new: true }
+    );
+    console.log(updatedUser);
+
+    const token = jwt.sign({ email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled }, SECRET_KEY, { expiresIn: '1h' });
     
-    res.json({ success: true});
+    res.json({ success: true, token});
   }
   else {
     res.json({ success: false});
