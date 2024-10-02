@@ -154,8 +154,8 @@ app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
-app.get('/success', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'success.html'));
+app.get('/download', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'download.html'));
 });
 
 app.post('/getResponse', async (req, res) => {
@@ -336,12 +336,16 @@ app.post('/create-checkout-session', async (req, res) => {
       mode: 'subscription', // subscription mode for recurring payments
       line_items: [
         {
-          price: "price_1Q3OXILFfRbXlwIneUoowBEI", // The price ID from your Stripe Dashboard
+          price: "price_1Q5BoXLFfRbXlwInSrfeTi5d", // The price ID from your Stripe Dashboard
           quantity: 1,
         },
       ],
+      subscription_data: {
+        trial_period_days: 7, // Set trial period here
+      },
+      payment_method_collection: 'always',
       success_url: `${req.headers.origin}/dashboard?token=${tokenYes}`,
-      cancel_url: `${req.headers.origin}/dashboard?token=${tokenYes}`,
+      cancel_url: `${req.headers.origin}/dashboard?token=${tokenNo}`,
       customer_email: email
     });
 
@@ -355,6 +359,44 @@ app.post('/create-checkout-session', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.post('/create-checkout-session2', async (req, res) => {
+
+  try {
+    const email = req.body.email;
+    const tokenYes = jwt.sign({ email: email, subscription: true, canceled: false }, SECRET_KEY, { expiresIn: '1h' });
+    const tokenNo = jwt.sign({ email: email, subscription: false, canceled: false }, SECRET_KEY, { expiresIn: '1h' });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription', // subscription mode for recurring payments
+      line_items: [
+        {
+          price: "price_1Q5BpRLFfRbXlwInQh3iIyTw", // The price ID from your Stripe Dashboard
+          quantity: 1,
+        },
+      ],
+      subscription_data: {
+        trial_period_days: 7, // Set trial period here
+      },
+      payment_method_collection: 'always',
+      success_url: `${req.headers.origin}/dashboard?token=${tokenYes}`,
+      cancel_url: `${req.headers.origin}/dashboard?token=${tokenNo}`,
+      customer_email: email
+    });
+
+    const customer = await stripe.customers.create({
+      email: email
+    });
+
+
+    res.json({ url: session.url});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 app.post('/update-subscription', async (req, res) => {
   const email = req.body.email;
   const subscription = req.body.subscription;
@@ -447,6 +489,7 @@ app.post('/cancel-subscription', async (req, res) => {
     const canceledSubscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: true,
     });
+    console.log(canceledSubscription);
 
     const updatedUser = await User.findOneAndUpdate(
       { email }, 
@@ -462,9 +505,41 @@ app.post('/cancel-subscription', async (req, res) => {
   else {
     res.json({ success: false});
   }
-  
-  
+});
 
+app.post('/renew-subscription', async (req, res) => {
+  const email = req.body.email;
+  const customerId = await getCustomerIdByEmail(email);
+
+  if (customerId) {
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'active',
+    });
+
+    console.log(subscriptions)
+
+    const subscriptionId = subscriptions.data[0].id;
+
+    const canceledSubscription = await stripe.subscriptions.update(subscriptionId, {
+      cancel_at_period_end: false,
+    });
+    console.log(canceledSubscription)
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email }, 
+      { $set: { canceled: false } }, 
+      { new: true }
+    );
+    console.log(updatedUser);
+
+    const token = jwt.sign({ email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled }, SECRET_KEY, { expiresIn: '1h' });
+    
+    res.json({ success: true, token});
+  }
+  else {
+    res.json({ success: false});
+  }
 });
 
 
