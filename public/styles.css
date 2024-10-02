@@ -33,11 +33,11 @@ body {
     color: black;
     font-weight: bold;
 
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 .get-started:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
 }
 
 .info-section {
@@ -252,5 +252,17 @@ body {
     display: none;
 }
 
+.download {
+    padding: 50px;
+}
 
+.download img {
+    max-height: 200px;
+    width: auto;
+}
+
+.bluelink {
+    color: blue;
+    cursor: pointer;
+}
 
