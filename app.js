@@ -158,6 +158,18 @@ app.get('/download', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'download.html'));
 });
 
+app.get('/terms-of-service', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'terms.html'));
+});
+
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'privacy.html'));
+});
+
+app.get('/refund-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'refunds.html'));
+});
+
 app.post('/getResponse', async (req, res) => {
     const img = req.body.image;
 
