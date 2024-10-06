@@ -172,6 +172,8 @@ app.get('/refund-policy', (req, res) => {
 
 app.post('/getResponse', async (req, res) => {
     const img = req.body.image;
+    console.log("Request arrived");
+    console.log(req.body.image.substring(30,70))
 
     
     const response1 = await pre(img)
@@ -554,6 +556,20 @@ app.post('/renew-subscription', async (req, res) => {
   }
 });
 
+app.post('/desktop', async (req, res) => {
+    const img = req.body.image;
+
+    console.log("request received");
+
+    const response = "Image was " + img;
+
+    res.json({ response: response});
+ 
+});
+
+app.get("/version", (req, res) => {
+  res.json({ version: "test" });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
