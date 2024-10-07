@@ -258,9 +258,11 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, message: 'User already exists' });
     }
     else {
+      
       const hashedPassword = await bcrypt.hash(password, 10);
       user = new User({ email: email, password: hashedPassword, subscription: false, canceled: false});
       await user.save();
+
       console.log(user);
 
       const token = jwt.sign({ email: user.email, subscription: false, canceled: false }, SECRET_KEY, { expiresIn: '1h' });
@@ -279,7 +281,6 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  console.log("Trying login with:", email, password);
 
   try {
     const user = await User.findOne({ email });
