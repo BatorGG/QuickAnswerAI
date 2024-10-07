@@ -25,6 +25,47 @@ app.use((req, res, next) => {
     next();
 });
 
+// Function to generate a basic unique ID (you can improve this if needed)
+function generateUniqueId() {
+  return Math.random().toString(36).substr(2, 9); // Basic unique ID generator
+}
+
+// Middleware to manage cookies and assign unique ID to users
+app.use((req, res, next) => {
+  // Extract the 'userId' cookie from the request headers
+  let cookies = req.headers.cookie;
+  let userId;
+
+  if (cookies) {
+    // Parse the cookie string manually to get the 'userId'
+    cookies.split(';').forEach((cookie) => {
+      let [name, value] = cookie.split('=');
+      if (name.trim() === 'userId') {
+        userId = value;
+      }
+    });
+  }
+
+  if (!userId) {
+    // If no 'userId' found, generate a new one
+    userId = generateUniqueId();
+    // Set the 'userId' cookie in the response headers
+    res.setHeader('Set-Cookie', `userId=${userId}; HttpOnly; Path=/`);
+  }
+
+  // Attach userId to the request object for logging
+  req.userId = userId;
+
+  // Log the request with the user's unique ID and timestamp
+  const log = `${new Date().toISOString()} - User: ${req.userId} - ${req.method} ${req.url}`;
+  console.log(log);
+
+  next(); // Proceed to the next middleware
+});
+
+
+
+
 
 
 
