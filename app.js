@@ -94,7 +94,7 @@ async function pre(imgurl) {
     ],
     "max_tokens": 200
   });
-  console.log(response.choices[0]);
+  //console.log(response.choices[0]);
   return response.choices[0];
 }
 
@@ -112,7 +112,7 @@ async function main(text) {
     ],
     "max_tokens": 100
   });
-  console.log(response.choices[0]);
+  //console.log(response.choices[0]);
   return response.choices[0];
 }
 
@@ -146,7 +146,7 @@ async function multiple(aimsgs, humanmsgs) {
       messages: msgs,
       "max_tokens": 150
     });
-    console.log(response.choices[0]);
+    //console.log(response.choices[0]);
     return response.choices[0];
   }
   else {
@@ -213,8 +213,6 @@ app.get('/refund-policy', (req, res) => {
 
 app.post('/getResponse', async (req, res) => {
     const img = req.body.image;
-    console.log("Request arrived");
-    console.log(req.body.image.substring(30,70))
 
     
     const response1 = await pre(img)
@@ -231,6 +229,9 @@ app.post('/getResponse', async (req, res) => {
     
     //const response = await test(img);
     //const hidden = response;
+
+    console.log("User asked: " + hidden);
+    console.log("Response: " + response);
 
     res.json({
         message: 'Success',
@@ -289,8 +290,8 @@ const SECRET_KEY = process.env.JWT; // Replace with a strong secret key
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(req.body)
-  console.log(email, password);
+  //console.log(req.body)
+  //console.log(email, password);
 
   try {
     var user = await User.findOne({ email });
@@ -493,7 +494,7 @@ async function checkUserSubscriptionByEmail(email) {
       status: 'active',
   });
 
-  console.log(subscriptions);
+  //console.log(subscriptions);
 
   return subscriptions.data.length > 0; // Returns true if active subscription exists
 };
@@ -538,7 +539,7 @@ app.post('/cancel-subscription', async (req, res) => {
       status: 'active',
     });
 
-    console.log(subscriptions)
+    //console.log(subscriptions)
 
     const subscriptionId = subscriptions.data[0].id;
 
@@ -573,14 +574,14 @@ app.post('/renew-subscription', async (req, res) => {
       status: 'active',
     });
 
-    console.log(subscriptions)
+    //console.log(subscriptions)
 
     const subscriptionId = subscriptions.data[0].id;
 
     const canceledSubscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: false,
     });
-    console.log(canceledSubscription)
+    //console.log(canceledSubscription)
 
     const updatedUser = await User.findOneAndUpdate(
       { email }, 
