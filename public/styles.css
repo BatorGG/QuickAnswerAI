@@ -88,8 +88,9 @@ body {
 }
 
 .gif-container2 {
-    height: 350px;
-    width: auto;
+    width: 70%;
+    height: auto;
+    aspect-ratio: 16/9;
 }
 
 .gif {
@@ -107,7 +108,7 @@ body {
     align-items: center;
     background-color: #007bff;
     color: white;
-    height: 550px;
+    padding-bottom: 40px;
 }
 
 .how-it-works h1 {
@@ -227,6 +228,47 @@ body {
     margin-top: 30px;
 }
 
+.dashboard-container {
+    display: flex;
+    flex: 1;
+    padding: 10px;
+  }
+  
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    
+    width: 15%;
+    height: 300px;
+    background-color: #ededed;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  
+.sidebar-btn {
+    background-color: white;
+    color: rgb(85, 85, 85);
+    border-radius: 5px;
+    margin: 3px;
+    border: none;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.selected-btn {
+    color: black;
+    font-weight: bold;
+}
+  
+.content {
+    flex: 1;
+    margin-left: 10px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
 .hasSubscription {
     display: flex;
     flex-direction: column; /* Stack the divs vertically */
@@ -243,11 +285,21 @@ body {
 
 .download {
     padding: 50px;
+    text-align: center;
 }
 
 .download img {
     max-height: 200px;
     width: auto;
+}
+
+.download h1 {
+    font-size: 48px;
+    margin: 40px;
+}
+
+.download p {
+    margin: 40px;
 }
 
 .bluelink {
@@ -287,6 +339,9 @@ body {
     .gif-container {
         max-width: 90%;
     }
+    .gif-container2 {
+        width: 90%;
+    }
     .pricing-options {
         width: 80%;
         flex-direction: column; /* Stack options vertically if needed */
@@ -294,6 +349,26 @@ body {
     .option {
         width: 100%;
         margin-top: 20px;
+    }
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar-btn {
+        width: 33%;
+    }
+    
+    .content {
+        margin-top: 10px;
+        margin-left: 0;
     }
 }
 
