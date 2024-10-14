@@ -393,7 +393,7 @@ app.post('/create-checkout-session', async (req, res) => {
       mode: 'subscription', // subscription mode for recurring payments
       line_items: [
         {
-          price: "price_1Q5BoXLFfRbXlwInSrfeTi5d", // The price ID from your Stripe Dashboard
+          price: "price_1Q9ttDLFfRbXlwInhvdzN2RZ", // The price ID from your Stripe Dashboard
           quantity: 1,
         },
       ],
@@ -429,7 +429,7 @@ app.post('/create-checkout-session2', async (req, res) => {
       mode: 'subscription', // subscription mode for recurring payments
       line_items: [
         {
-          price: "price_1Q5BpRLFfRbXlwInQh3iIyTw", // The price ID from your Stripe Dashboard
+          price: "price_1Q9tx3LFfRbXlwIngWSvbr2C", // The price ID from your Stripe Dashboard
           quantity: 1,
         },
       ],
