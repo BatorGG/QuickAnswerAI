@@ -98,19 +98,24 @@ async function pre(imgurl) {
   return response.choices[0];
 }
 
-async function main(text) {
+async function main(imgurl) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      {"role": "system", "content": "Keep answers as short as possible. 3 sentences maximum! Answer in the same language as the input text, but default to english. Maximum tokens is 100 so please finish every sentence before running out of tokens!"},
+      {"role": "system", "content": "You are a versatile assistant helping users by analyzing image-based text or visual content. Respond according to these rules:\n\n1.Always answer in the language on the image. If you cannot identify the language answer in english.\n\n2. If the image contains a question, answer it directly and concisely.\n\n3. If the image contains a term or phrase, provide a brief, clear explanation of that term in the language detected in the image text.\n\n4. If the image contains no readable text, analyze the visual content and describe what you see.\n\n5. Keep answers short, maximum response is 400 tokens, so please finish your sentences before running out of tokens."},
       {
         role: "user",
         content: [
-          { type: "text", text: text },
+          {
+            type: "image_url",
+            image_url: {
+              "url": imgurl,
+            },
+          },
         ],
       },
     ],
-    "max_tokens": 100
+    "max_tokens": 400
   });
   //console.log(response.choices[0]);
   return response.choices[0];
@@ -121,14 +126,32 @@ async function multiple(aimsgs, humanmsgs) {
   let msgs = [];
   let totalCharacters = 0;
 
-  msgs.push({"role": "system", "content": "Keep answers as short as possible. 3 sentences maximum! Answer in the same language as the input text, but default to english. Maximum tokens is 150 so please finish every sentence before running out of tokens!"})
+  msgs.push({"role": "system", "content": "Keep answers as short as possible. Answer in the same language as the input. If you cannot identify the language, respond in english. Maximum tokens is 400 so please finish every sentence before running out of tokens!"})
 
   for (let i = 0; i < humanmsgs.length; i++){
 
-    let toPush = {"role": "user", "content": humanmsgs[i]}
+    let toPush
+    
+
+    if (i == 0) {
+      toPush = {"role": "user", "content": [
+                    {
+                      "type": "image_url",
+                      "image_url": {
+                        "url": humanmsgs[i],
+                      },
+                    },
+                  ],
+                }
+    }
+    else {
+      toPush = {"role": "user", "content": humanmsgs[i]}
+      totalCharacters += humanmsgs[i].length;
+    }
+
     msgs.push(toPush)
 
-    totalCharacters += humanmsgs[i].length;
+    
 
     if (i < aimsgs.length) {
       let toPush2 =  {"role": "assistant", "content": aimsgs[i]}
@@ -144,7 +167,7 @@ async function multiple(aimsgs, humanmsgs) {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: msgs,
-      "max_tokens": 150
+      "max_tokens": 400
     });
     //console.log(response.choices[0]);
     return response.choices[0];
@@ -214,30 +237,16 @@ app.get('/refund-policy', (req, res) => {
 app.post('/getResponse', async (req, res) => {
     const img = req.body.image;
 
-    
-    const response1 = await pre(img)
-    if (response1.message.content.substring(0, 2) == "0:"){
-      var response = response1.message.content.substring(2);
-      var hidden = "Photo";
-    }
-    else {
-      var response = await main(response1.message.content)
-      response = response.message.content;
-      var hidden = response1.message.content
-    }
-    //.message.content
-    
-    //const response = await test(img);
-    //const hidden = response;
+    const response = await main(img)
 
-    console.log("User asked: " + hidden);
+    //console.log("User asked: " + hidden);
     console.log("Response: " + response);
 
     res.json({
         message: 'Success',
         data: {
-          msg: response,
-          hidden: hidden
+          msg: response.message.content,
+          hidden: req.body.image
         }
       });
 });
