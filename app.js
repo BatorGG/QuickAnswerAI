@@ -76,7 +76,7 @@ const openai = new OpenAI({ apiKey: process.env.OpenAI });
 
 async function pre(imgurl) {
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4o-2024-08-06",
     messages: [
       {"role": "system", "content": ""},
       {
@@ -100,7 +100,7 @@ async function pre(imgurl) {
 
 async function main(imgurl) {
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4o-2024-08-06",
     messages: [
       {"role": "system", "content": "You are a versatile assistant helping users by analyzing image-based text or visual content. Respond according to these rules:\n\n1.Always answer in the language on the image. If you cannot identify the language answer in english.\n\n2. If the image contains a question, answer it directly and concisely.\n\n3. If the image contains a term or phrase, provide a brief, clear explanation of that term in the language detected in the image text.\n\n4. If the image contains no readable text, analyze the visual content and describe what you see.\n\n5. Keep answers short, maximum response is 400 tokens, so please finish your sentences before running out of tokens."},
       {
@@ -165,7 +165,7 @@ async function multiple(aimsgs, humanmsgs) {
   console.log("Total characters:", totalCharacters);
   if (totalCharacters < 1000) {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o-2024-08-06",
       messages: msgs,
       "max_tokens": 400
     });
@@ -187,7 +187,7 @@ async function testy() {
         {"role": "user", "content": "Hello how are you?"}
       ],
     "max_tokens": 50,
-    model: "gpt-4o-mini",
+    model: "gpt-4o-2024-08-06",
   });
 
   console.log(completion.choices[0]);
