@@ -8,7 +8,7 @@ if (checkoutBtn) {
     const decodedToken = decodeJWT(token);
     const email = decodedToken.email
     
-    fetch('/create-checkout-session', {
+    fetch(baseURL + '/create-checkout-session', {
       method: 'POST',
       body: JSON.stringify({ 
         email: email,
@@ -341,4 +341,45 @@ function updateDashboard() {
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
+}
+
+const feedbackBtn = document.getElementById("submitFeedback");
+if (feedbackBtn) {
+  feedbackBtn.addEventListener('click', function () {
+    const email = document.getElementById("feedbackEmail").value;
+    const valid = validateEmail(email)
+    
+    if (!valid) {
+      document.getElementById("emailError").innerText = "Please provide a valid email address!";
+      return
+    }
+
+    document.getElementById("emailError").innerText = "";
+
+    const feedbackText = document.getElementById("feedbackText").value;
+
+    fetch(baseURL + '/feedback', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        feedback: feedbackText,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then((data) => {
+      console.log('Success:', data)
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+      //document.getElementById("emailError").innerText = "Error sending feedback";
+    });
+
+    document.getElementsByClassName("feedback")[0].innerHTML = `
+    <h2>Give feedback:</h2>
+    <h2>Feedback sent!</h2>
+    `
+
+  });
 }

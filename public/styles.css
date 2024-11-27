@@ -111,7 +111,7 @@ body {
     padding-bottom: 40px;
 }
 
-.how-it-works h1 {
+.how-it-works h2 {
     margin-top: 40px;
     font-size: 48px;
 }
@@ -307,7 +307,7 @@ body {
     cursor: pointer;
 }
 
-.coming-soon {
+.feedback {
     text-align: center;
     background-color: #007bff;
     color: white;
@@ -316,14 +316,34 @@ body {
     padding-bottom: 50px;
 }
 
-.coming-soon h1 {
+.feedback h2 {
     margin-bottom: 20px;
     font-size: 48px;
 }
 
-.coming-soon h2 {
+.feedback h3 {
     margin-top: 25px;
     margin-bottom: 10px;
+}
+
+.feedback input {
+    display: block;
+    margin: 0 auto;
+    width: 400px;
+    height: 30px;
+    max-width: 90%;
+    border-radius: 3px;
+}
+
+.feedback textarea {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 35px;
+    resize: none;
+    width: 400px;
+    height: 200px;
+    max-width: 90%;
+    border-radius: 5px;
 }
 
 /* Styles for mobile screens */
@@ -422,7 +442,7 @@ footer {
     text-align: center;
 }
 
-footer h1 {
+footer h2 {
     font-size: 32px;
     font-weight: bold;
     color: white;
