@@ -402,7 +402,7 @@ app.post('/create-checkout-session', async (req, res) => {
       mode: 'subscription', // subscription mode for recurring payments
       line_items: [
         {
-          price: "price_1Q9ttDLFfRbXlwInhvdzN2RZ", // The price ID from your Stripe Dashboard
+          price: "price_1QNxFVLFfRbXlwInysRV5SQ4", // The price ID from your Stripe Dashboard
           quantity: 1,
         },
       ],
@@ -438,7 +438,7 @@ app.post('/create-checkout-session2', async (req, res) => {
       mode: 'subscription', // subscription mode for recurring payments
       line_items: [
         {
-          price: "price_1Q9tx3LFfRbXlwIngWSvbr2C", // The price ID from your Stripe Dashboard
+          price: "price_1QNxFaLFfRbXlwInpy1vaetU", // The price ID from your Stripe Dashboard
           quantity: 1,
         },
       ],
@@ -619,8 +619,19 @@ app.post('/desktop', async (req, res) => {
  
 });
 
+
 app.get("/version", (req, res) => {
   res.json({ version: "test" });
+});
+
+app.post('/feedback', async (req, res) => {
+  const feedback = req.body;
+
+  console.log("Feedback:");
+  console.log(feedback)
+
+  res.json({ success: true});
+
 });
 
 app.listen(PORT, () => {
