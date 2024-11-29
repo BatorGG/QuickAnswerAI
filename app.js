@@ -517,24 +517,42 @@ async function checkUserSubscriptionByEmail(email) {
 }
 
 async function checkCanceled(email) {
-  console.log("Check canceled")
+  console.log("Checking if subscription is set to cancel at period end...");
+
   const customerId = await getCustomerIdByEmail(email);
-  
+
   if (!customerId) {
-      console.log('No customer found with that email.');
-      return false; // No customer found
+    console.log("No customer found with that email.");
+    return false; // No customer found
   }
 
-  // Check for active subscriptions
+  // Fetch all subscriptions for the customer
   const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      status: 'active',
+    customer: customerId,
+    status: 'all', // Include all statuses
   });
 
-  console.log(subscriptions.data[0].cancel_at_period_end);
+  // Check if there's any subscription
+  if (!subscriptions.data.length) {
+    console.log("No subscriptions found for this customer.");
+    return false;
+  }
 
-  return subscriptions.data[0].cancel_at_period_end; // Returns true if active subscription exists
-};
+  // Find the relevant subscription
+  const subscription = subscriptions.data.find(sub =>
+    ['active', 'trialing', 'past_due'].includes(sub.status)
+  );
+
+  if (!subscription) {
+    console.log("No active or trialing subscription found.");
+    return false;
+  }
+
+  // Return the cancel_at_period_end flag
+  console.log(`Subscription cancel_at_period_end: ${subscription.cancel_at_period_end}`);
+  return subscription.cancel_at_period_end;
+}
+
 
 
 
@@ -549,73 +567,110 @@ app.post('/check-subscription', async (req, res) => {
 
 app.post('/cancel-subscription', async (req, res) => {
   const email = req.body.email;
-  const customerId = await getCustomerIdByEmail(email);
 
-  if (customerId) {
+  try {
+    const customerId = await getCustomerIdByEmail(email);
+
+    if (!customerId) {
+      return res.json({ success: false, message: 'Customer not found' });
+    }
+
+    // Fetch subscriptions with relevant statuses
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: 'active',
+      status: 'all', // Include all statuses (active, trialing, etc.)
     });
 
-    //console.log(subscriptions)
+    // Find the first subscription that's active or trialing
+    const subscription = subscriptions.data.find(sub => 
+      ['active', 'trialing'].includes(sub.status)
+    );
 
-    const subscriptionId = subscriptions.data[0].id;
+    if (!subscription) {
+      return res.json({ success: false, message: 'No active or trialing subscription found' });
+    }
 
-    const canceledSubscription = await stripe.subscriptions.update(subscriptionId, {
+    // Cancel the subscription at the end of the billing period or trial
+    const canceledSubscription = await stripe.subscriptions.update(subscription.id, {
       cancel_at_period_end: true,
     });
     console.log(canceledSubscription);
 
+    // Update user in the database
     const updatedUser = await User.findOneAndUpdate(
-      { email }, 
-      { $set: { canceled: true } }, 
+      { email },
+      { $set: { canceled: true } },
       { new: true }
     );
     console.log(updatedUser);
 
-    const token = jwt.sign({ email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled }, SECRET_KEY, { expiresIn: '1h' });
-    
-    res.json({ success: true, token});
-  }
-  else {
-    res.json({ success: false});
+    // Generate updated JWT token
+    const token = jwt.sign(
+      { email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ success: true, token });
+  } catch (error) {
+    console.error('Error canceling subscription:', error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
 app.post('/renew-subscription', async (req, res) => {
   const email = req.body.email;
-  const customerId = await getCustomerIdByEmail(email);
 
-  if (customerId) {
+  try {
+    const customerId = await getCustomerIdByEmail(email);
+
+    if (!customerId) {
+      return res.json({ success: false, message: 'Customer not found.' });
+    }
+
+    // Fetch all subscriptions for the customer
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: 'active',
+      status: 'all', // Include all statuses
     });
 
-    //console.log(subscriptions)
+    // Find the relevant subscription to renew
+    const subscription = subscriptions.data.find(sub =>
+      ['active', 'trialing', 'past_due', 'canceled'].includes(sub.status)
+    );
 
-    const subscriptionId = subscriptions.data[0].id;
+    if (!subscription) {
+      return res.json({ success: false, message: 'No subscription found to renew.' });
+    }
 
-    const canceledSubscription = await stripe.subscriptions.update(subscriptionId, {
+    // Set cancel_at_period_end to false
+    const renewedSubscription = await stripe.subscriptions.update(subscription.id, {
       cancel_at_period_end: false,
     });
-    //console.log(canceledSubscription)
+    console.log('Renewed Subscription:', renewedSubscription);
 
+    // Update user in the database
     const updatedUser = await User.findOneAndUpdate(
-      { email }, 
-      { $set: { canceled: false } }, 
+      { email },
+      { $set: { canceled: false } },
       { new: true }
     );
-    console.log(updatedUser);
+    console.log('Updated User:', updatedUser);
 
-    const token = jwt.sign({ email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled }, SECRET_KEY, { expiresIn: '1h' });
-    
-    res.json({ success: true, token});
-  }
-  else {
-    res.json({ success: false});
+    // Generate updated JWT token
+    const token = jwt.sign(
+      { email: updatedUser.email, subscription: updatedUser.subscription, canceled: updatedUser.canceled },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    res.json({ success: true, token });
+  } catch (error) {
+    console.error('Error renewing subscription:', error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 app.post('/desktop', async (req, res) => {
     const img = req.body.image;
