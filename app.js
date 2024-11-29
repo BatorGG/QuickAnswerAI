@@ -415,9 +415,10 @@ app.post('/create-checkout-session', async (req, res) => {
       customer_email: email
     });
 
+    /*
     const customer = await stripe.customers.create({
       email: email
-    });
+    });*/
 
 
     res.json({ url: session.url});
