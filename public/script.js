@@ -302,6 +302,7 @@ function updateDashboard() {
     }).then(response => response.json())
       .then((data) => {
         console.log('Success:', data)
+        window.location.href = baseURL + "/dashboard";
       })
       .catch(error => console.error('Error:', error));
 
