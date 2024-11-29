@@ -483,33 +483,41 @@ app.post('/update-subscription', async (req, res) => {
 
 
 async function getCustomerIdByEmail(email) {
-  const customers = await stripe.customers.list({ limit: 100 }); // Adjust limit as needed
+  console.log("Get id by email")
+  const customers = await stripe.customers.search({
+    query: `email:'${email}'`,
+  });
   
-  // Find the customer with the matching email
-  const customer = customers.data.find(cust => cust.email === email);
-  return customer ? customer.id : null; // Return Customer ID or null if not found
-};
+  // Return the first matching customer
+  return customers.data.length > 0 ? customers.data[0].id : null;
+}
 
 async function checkUserSubscriptionByEmail(email) {
+  console.log("Check activ subscription")
   const customerId = await getCustomerIdByEmail(email);
-  
+
   if (!customerId) {
-      console.log('No customer found with that email.');
-      return false; // No customer found
+    console.log('No customer found with that email.');
+    return false; // No customer found
   }
 
-  // Check for active subscriptions
+  // Check for active or trialing subscriptions
   const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      status: 'active',
+    customer: customerId,
+    status: 'all', // Fetch all statuses
   });
 
-  console.log(subscriptions);
+  // Check for relevant subscription states
+  const hasActiveSubscription = subscriptions.data.some(sub => 
+    ['active', 'trialing'].includes(sub.status)
+  );
 
-  return subscriptions.data.length > 0; // Returns true if active subscription exists
-};
+  console.log(subscriptions);
+  return hasActiveSubscription; // Return true if relevant subscription exists
+}
 
 async function checkCanceled(email) {
+  console.log("Check canceled")
   const customerId = await getCustomerIdByEmail(email);
   
   if (!customerId) {
