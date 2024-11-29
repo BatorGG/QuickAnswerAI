@@ -503,7 +503,7 @@ async function checkUserSubscriptionByEmail(email) {
       status: 'active',
   });
 
-  //console.log(subscriptions);
+  console.log(subscriptions);
 
   return subscriptions.data.length > 0; // Returns true if active subscription exists
 };
