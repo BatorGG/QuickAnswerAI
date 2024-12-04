@@ -1,10 +1,5 @@
 const baseURL = window.location.origin;
 
-if (window.location.hostname.includes("onrender.com")) {
-  const newURL = window.location.href.replace("quickanserai.onrender.com", "quickanswerai.net");
-  window.location.href = newURL;
-}
-
 const checkoutBtn = document.getElementById('checkout-button');
 if (checkoutBtn) {
   checkoutBtn.addEventListener('click', function () {
