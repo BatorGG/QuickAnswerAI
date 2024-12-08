@@ -384,3 +384,32 @@ if (feedbackBtn) {
 
   });
 }
+
+
+
+const popupOverlay = document.getElementById("popup-overlay");
+const closeBtn = document.getElementById("close-btn");
+
+// Show the popup (you can trigger this on a button click or other event)
+function showPopup() {
+  popupOverlay.classList.remove("hidden");
+}
+
+// Hide the popup
+closeBtn.addEventListener("click", () => {
+  popupOverlay.classList.add("hidden");
+});
+
+// Optional: Close the popup when clicking outside of it
+popupOverlay.addEventListener("click", (e) => {
+  
+  if (e.target === popupOverlay || e.target === closeBtn) {
+    popupOverlay.classList.add("hidden");
+    console.log("targetclicked")
+    console.log(e.target.classList)
+    
+  }
+});
+
+// Example: Show the popup automatically after 2 seconds
+setTimeout(showPopup, 1000);
