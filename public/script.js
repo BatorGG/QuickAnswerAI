@@ -412,4 +412,4 @@ popupOverlay.addEventListener("click", (e) => {
 });
 
 // Example: Show the popup automatically after 2 seconds
-setTimeout(showPopup, 1000);
+//setTimeout(showPopup, 1000);
